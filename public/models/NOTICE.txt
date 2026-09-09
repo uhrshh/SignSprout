@@ -1,0 +1,7 @@
+MediaPipe handpose_3d detector-lite and landmark-lite, version 1.
+Copyright Google LLC. Licensed under Apache License 2.0.
+https://www.apache.org/licenses/LICENSE-2.0
+Original model cards and official archives:
+https://www.kaggle.com/models/mediapipe/handpose-3d/tfJs/detector-lite/1
+https://www.kaggle.com/models/mediapipe/handpose-3d/tfJs/landmark-lite/1
+Model files are bundled locally to avoid unavailable TF Hub redirects.

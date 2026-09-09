@@ -11,19 +11,21 @@ export function useCamera(target:string,onMatch:()=>void){
  function stop(){cleanup();setStatus('off');setFeedback('Camera paused. Enable it whenever you’re ready.');}
  useEffect(()=>()=>{run.current++;stream.current?.getTracks().forEach(t=>t.stop());if(timer.current)clearTimeout(timer.current);detector.current?.dispose()},[]);
  async function start(){
-  if(busy.current||stream.current)return;busy.current=true;const id=++run.current;setStatus('loading');setFeedback('Opening camera and downloading the hand model…');
+  if(busy.current||stream.current)return;busy.current=true;const id=++run.current;setStatus('loading');setFeedback('Opening camera…');
   try{
    if(!navigator.mediaDevices?.getUserMedia)throw new Error('Camera access requires a secure browser connection.');
    const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:640,height:480},audio:false});
    if(run.current!==id){s.getTracks().forEach(t=>t.stop());return;}stream.current=s;
    s.getVideoTracks()[0].onended=()=>{if(run.current===id)stop()};
    if(video.current){video.current.srcObject=s;await video.current.play();}
+   setFeedback('Loading hand tracking…');
    const [tf,hands]=await Promise.all([import('@tensorflow/tfjs-core'),import('@tensorflow-models/hand-pose-detection/dist/tfjs/detector')]);
-   await import('@tensorflow/tfjs-backend-webgl');await tf.setBackend('webgl');await tf.ready();
+   await import('@tensorflow/tfjs-backend-webgl');
+   try{if(!await tf.setBackend('webgl'))throw new Error('WebGL unavailable');await tf.ready();}catch{await import('@tensorflow/tfjs-backend-cpu');await tf.setBackend('cpu');await tf.ready();}
    if(run.current!==id)return;
-   if(!detector.current)detector.current=await hands.load({runtime:'tfjs',modelType:'lite',maxHands:1});
+   if(!detector.current)detector.current=await hands.load({runtime:'tfjs',modelType:'lite',maxHands:1,detectorModelUrl:'/models/detector/model.json',landmarkModelUrl:'/models/landmark/model.json'});
    if(run.current!==id){detector.current?.dispose();detector.current=null;return;}
-   setStatus('live');busy.current=false;
+   setStatus('live');setFeedback('Tracker ready. Bring one whole hand into the frame.');busy.current=false;
    async function tick(){
     if(run.current!==id||!video.current)return;
     try{
@@ -36,10 +38,10 @@ export function useCamera(target:string,onMatch:()=>void){
      if(found===targetRef.current){if(!held.current)held.current=performance.now();const amount=Math.min(100,(performance.now()-held.current)/15);setHold(amount);setFeedback(amount>=100?'Nice shape! You earned 25 XP. Ready for the next sign?':'Looking good. Hold your hand steady…');if(amount>=100)matchRef.current();}
      else{held.current=0;setHold(0);setFeedback(!p?'Bring one whole hand into the frame.':found?`I see a ${found}-like shape. Try the letter ${targetRef.current}.`:'Hand found. Follow the finger positions on your lesson card.');}
      timer.current=setTimeout(tick,100);
-    }catch{cleanup();setStatus('error');setFeedback('Hand tracking stopped. Try enabling the camera again, or use self-practice.');}
+    }catch(error){console.error('Hand inference failed',error);cleanup();detector.current?.dispose();detector.current=null;setStatus('error');setFeedback('Hand tracking stopped: '+(error instanceof Error?error.message:'unknown error')+'. Retry the camera.');}
    }
    void tick();
-  }catch(e){if(run.current!==id)return;cleanup();setStatus('error');setFeedback(e instanceof DOMException&&e.name==='NotAllowedError'?'Camera permission was denied. Allow camera access in your browser, then retry.':e instanceof DOMException&&e.name==='NotFoundError'?'No webcam was found. Connect a camera or use self-practice.':'Could not start hand tracking. Check your connection and camera, then retry. Self-practice is also available.');}
+  }catch(e){if(run.current!==id)return;console.error('Camera/model startup failed',e);cleanup();setStatus('error');setFeedback(e instanceof DOMException&&e.name==='NotAllowedError'?'Camera permission was denied. Allow camera access in your browser, then retry.':e instanceof DOMException&&e.name==='NotFoundError'?'No webcam was found. Connect a camera or use self-practice.':'Could not start hand tracking: '+(e instanceof Error?e.message:'unknown error')+'. Retry the camera.');}
  }
  return {video,canvas,status,feedback,hold,start,stop};
 }
