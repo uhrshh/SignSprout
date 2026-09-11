@@ -13,7 +13,7 @@ pnpm dev --host localhost --port 3001
 
 Open http://localhost:3001 and allow camera access when you start practice. No API key is required. Keep the development server running while using the app. `pnpm build` checks the production build.
 
-The project includes its original Sites registration in `.openai/hosting.json`; cloning this repository does not grant access to that deployment. GitHub stores the source and does not automatically host the running app.
+The app runs locally without an OpenAI account or API key. GitHub stores the source and does not automatically host the running app.
 
 ## Camera behavior
 
