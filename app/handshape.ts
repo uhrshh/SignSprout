@@ -1,7 +1,7 @@
 export type Point={x:number;y:number};
 const dist=(a:Point,b:Point)=>Math.hypot(a.x-b.x,a.y-b.y);
 export function classify(p:Point[]):string|null{
- if(p.length!==21)return null;
+ if(p.length!==21||p.some(point=>!Number.isFinite(point.x)||!Number.isFinite(point.y)))return null;
  const scale=dist(p[0],p[9]);if(scale<35)return null;
  const extended=[8,12,16,20].map(t=>dist(p[t],p[0])>dist(p[t-2],p[0])*1.25 && dist(p[t],p[t-3])>scale*.65);
  const thumb=dist(p[4],p[5])>scale*.65;

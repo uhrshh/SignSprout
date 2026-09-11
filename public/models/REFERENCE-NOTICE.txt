@@ -1,0 +1,31 @@
+Experimental reference matching data for Signsprout
+Reference teaching media: ASL University, Dr. William G. Vicars, Lifeprint.com. Copyright remains with the author. Original URLs are recorded in app/media.json and public/demos/ATTRIBUTION.txt.
+Alphabet: https://www.lifeprint.com/asl101/fingerspelling/abc.htm
+Landmark extraction: MediaPipe Hands/Holistic, Google LLC, Apache-2.0.
+Static templates are landmark representations extracted from the displayed reference photographs at multiple orientations. H is an explicitly geometric template derived from the adjacent extended fingers of U directed sideways; it is not an extracted H measurement.
+Word templates contain body-relative hand locations and handshape sequences extracted from demonstration GIFs/videos and frame sequences. PLEASE, MY, YOU and 10 use authored geometric rules instead. J and Z require shape and trajectory checks.
+These reference examples do not establish accuracy on independent signers. No population accuracy is claimed. Facial grammar and fluency are not graded.
+
+Additional frame-sequence source images:
+https://www.lifeprint.com/asl101/gifs-animated/pleasecloseup.gif
+https://www.lifeprint.com/asl101/images-signs/my.gif
+https://www.lifeprint.com/asl101/images-signs/please.gif
+https://www.lifeprint.com/asl101/signjpegs/f/friend-01.jpg
+https://www.lifeprint.com/asl101/signjpegs/f/friend-02.jpg
+https://www.lifeprint.com/asl101/signjpegs/f/friend-03.jpg
+https://www.lifeprint.com/asl101/signjpegs/f/friend-04.jpg
+https://www.lifeprint.com/asl101/signjpegs/f/friend-good1.jpg
+https://www.lifeprint.com/asl101/signjpegs/f/friend-good2.jpg
+https://www.lifeprint.com/asl101/signjpegs/f/friend-good3.jpg
+https://www.lifeprint.com/asl101/signjpegs/f/friend-good4.jpg
+https://www.lifeprint.com/asl101/signjpegs/f/friend1.jpg
+https://www.lifeprint.com/asl101/signjpegs/f/friend2.jpg
+https://www.lifeprint.com/asl101/signjpegs/f/friend3.jpg
+https://www.lifeprint.com/asl101/signjpegs/f/friend4.jpg
+https://www.lifeprint.com/asl101/signjpegs/u/understand-01.jpg
+https://www.lifeprint.com/asl101/signjpegs/u/understand-02.jpg
+https://www.lifeprint.com/asl101/signjpegs/y/yes1.jpg
+https://www.lifeprint.com/asl101/signjpegs/y/yes2.jpg
+https://www.lifeprint.com/asl101/signjpegs/y/yes3.jpg
+https://www.lifeprint.com/asl101/signjpegs/y/yes4.jpg
+https://www.lifeprint.com/asl101/signjpegs/y/you.ht1.jpg

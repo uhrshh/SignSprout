@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {createBodyTracker} from '../app/recognition/holistic';
+const draws:any[][]=[];let calls=0,seen:any,closed=0;
+const pose=Array.from({length:33},()=>({x:.5,y:.5,visibility:1}));pose[11].x=.3;pose[12].x=.7;pose[15].x=.25;pose[16].x=.75;
+const hand=(x:number)=>Array.from({length:21},(_,i)=>({x:x+i*.001,y:.5-i*.002}));
+const body={poseLandmarks:pose,leftHandLandmarks:hand(.25)};
+(globalThis as any).window={Holistic:class {cb:any;setOptions(){}async initialize(){}onResults(cb:any){this.cb=cb}async send({image}:any){seen=image;this.cb(body)}async close(){closed++}}};
+(globalThis as any).document={createElement:()=>({width:0,height:0,getContext:()=>({drawImage:(...args:any[])=>draws.push(args)})})};
+(globalThis as any).__testDetector={estimateHands:async(image:any)=>{calls++;assert.equal(image,seen,'Fallback must use the exact captured frame sent to Holistic');return [{score:.9,keypoints:hand(.75).map(p=>({x:p.x*640,y:p.y*480}))}]},reset(){},dispose(){}};
+const video={videoWidth:640,videoHeight:480} as HTMLVideoElement;
+const single=await createBodyTracker(1);await single.estimate(video);assert.equal(calls,0,'Do not search for an unused second hand');await single.dispose();
+const dual=await createBodyTracker(2);const result=await dual.estimate(video);assert.equal(calls,1);assert.notEqual(seen,video,'Capture once before asynchronous inference');assert.equal(draws.at(-1)![0],video);assert.equal(result.right?.[0].x,.75);assert.equal(result.left?.[0].x,.25);await dual.dispose();assert.equal(closed,2);
+console.log('PASS: shared captured frame for body and hand inference, second-hand recovery, single-hand fast path, and disposal. Mocked runtime regression, not model accuracy.');

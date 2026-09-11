@@ -36,3 +36,10 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
+
+/research/
+*.tsbuildinfo
+
+# Local runtime sessions
+:memory:.ses
+/.sites-runtime/
